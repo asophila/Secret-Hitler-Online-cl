@@ -83,6 +83,8 @@ import HelmetMetaData from "./util/HelmetMetaData";
 import { defaultPortrait } from "./assets";
 import Player from "./player/Player";
 import LoginPageContent from "./LoginPageContent";
+import LobbyBrowser from "./components/LobbyBrowser";
+import LobbySettingsPanel from "./components/LobbySettingsPanel";
 import Cookies from "js-cookie";
 import AnnouncementBox from "./util/AnnouncementBox";
 import {
@@ -163,6 +165,9 @@ type AppState = {
   eventBarMessage: string;
   statusBarText: string;
   allAnimationsFinished: boolean;
+  showLobbyBrowser: boolean;
+  lobbyIsPublic: boolean;
+  lobbyName: string;
 };
 
 const defaultAppState: AppState = {
@@ -192,6 +197,9 @@ const defaultAppState: AppState = {
   eventBarMessage: "",
   statusBarText: "---",
   allAnimationsFinished: true,
+  showLobbyBrowser: false,
+  lobbyIsPublic: false,
+  lobbyName: "",
 };
 
 class App extends Component<{}, AppState> {
@@ -682,7 +690,7 @@ class App extends Component<{}, AppState> {
         <header className="App-header">SECRET-HITLER.ONLINE</header>
         <br />
         <div style={{ textAlign: "center" }}>
-          {/** TODO: Add reusable announcement component. 
+          {/** TODO: Add reusable announcement component.
                     <div style={{backgroundColor: "#222222", width: "50vmin", margin: "0 auto", padding: "20px"}}>
                         <p>
                             Hello! Secret Hitler Online is currently undergoing some maintenance.
@@ -692,39 +700,73 @@ class App extends Component<{}, AppState> {
 
                     </div>
                     */}
-          <h2>JOIN A GAME</h2>
-          <MaxLengthTextField
-            label={"Lobby"}
-            onChange={this.updateJoinLobby}
-            value={this.state.joinLobby}
-            maxLength={LOBBY_CODE_LENGTH}
-            showCharCount={false}
-            forceUpperCase={true}
-          />
 
+          {/* Name input shown for both browser and manual join */}
           <MaxLengthTextField
             label={"Your Name"}
-            onChange={this.updateJoinName}
-            value={this.state.joinName}
+            onChange={(name: string) => {
+              this.updateJoinName(name);
+              this.updateCreateLobbyName(name);
+            }}
+            value={this.state.joinName || this.state.createLobbyName}
             maxLength={12}
           />
-          <p id={"errormessage"}>{this.state.joinError}</p>
+
+          {/* Toggle between lobby browser and manual join */}
           <button
-            onClick={this.onClickJoin}
-            disabled={!this.shouldJoinButtonBeEnabled()}
+            onClick={() => this.setState({ showLobbyBrowser: !this.state.showLobbyBrowser })}
+            style={{ marginTop: "10px", marginBottom: "20px" }}
           >
-            JOIN
+            {this.state.showLobbyBrowser ? "JOIN WITH CODE" : "BROWSE PUBLIC LOBBIES"}
           </button>
+
+          {this.state.showLobbyBrowser ? (
+            <LobbyBrowser
+              onJoinLobby={(code: string) => {
+                this.setState({ joinLobby: code }, () => {
+                  if (this.state.joinName) {
+                    this.onClickJoin();
+                  } else {
+                    this.setState({ joinError: "Please enter your name first" });
+                  }
+                });
+              }}
+              onCreatePrivate={() => {
+                if (this.state.joinName) {
+                  this.setState({
+                    createLobbyName: this.state.joinName
+                  }, () => {
+                    this.onClickCreateLobby();
+                  });
+                } else {
+                  this.setState({ createLobbyError: "Please enter your name first" });
+                }
+              }}
+            />
+          ) : (
+            <>
+              <h2>JOIN A GAME</h2>
+              <MaxLengthTextField
+                label={"Lobby"}
+                onChange={this.updateJoinLobby}
+                value={this.state.joinLobby}
+                maxLength={LOBBY_CODE_LENGTH}
+                showCharCount={false}
+                forceUpperCase={true}
+              />
+              <p id={"errormessage"}>{this.state.joinError}</p>
+              <button
+                onClick={this.onClickJoin}
+                disabled={!this.shouldJoinButtonBeEnabled()}
+              >
+                JOIN
+              </button>
+            </>
+          )}
         </div>
         <br />
         <div>
           <h2>CREATE A LOBBY</h2>
-          <MaxLengthTextField
-            label={"Your Name"}
-            onChange={this.updateCreateLobbyName}
-            value={this.state.createLobbyName}
-            maxLength={12}
-          />
           <p id={"errormessage"}>{this.state.createLobbyError}</p>
           <button
             onClick={this.onClickCreateLobby}
@@ -886,13 +928,18 @@ class App extends Component<{}, AppState> {
         <div
           style={{ textAlign: "left", marginLeft: "20px", marginRight: "20px" }}
         >
-          <div style={{ display: "flex", flexDirection: "row" }}>
+          <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
             <h2>LOBBY CODE: </h2>
             <h2
               style={{ marginLeft: "5px", color: "var(--textColorHighlight)" }}
             >
               {this.state.lobby}
             </h2>
+            {this.state.lobbyIsPublic && (
+              <span style={{ marginLeft: "15px", padding: "5px 10px", backgroundColor: "#4a9eff", color: "white", borderRadius: "4px", fontSize: "14px", fontWeight: "bold" }}>
+                PÚBLICA
+              </span>
+            )}
           </div>
 
           <p style={{ marginBottom: "2px" }}>
@@ -913,6 +960,17 @@ class App extends Component<{}, AppState> {
             />
             <button onClick={this.onClickCopy}>COPY</button>
           </div>
+
+          <LobbySettingsPanel
+            lobbyCode={this.state.lobby}
+            isVIP={isVIP}
+            initialIsPublic={this.state.lobbyIsPublic}
+            initialLobbyName={this.state.lobbyName}
+            onSettingsChanged={() => {
+              // Refresh lobby state or show confirmation
+              this.showSnackBar("Configuración actualizada");
+            }}
+          />
 
           <div id={"lobby-lower-container"}>
             <div id={"lobby-player-area-container"}>
