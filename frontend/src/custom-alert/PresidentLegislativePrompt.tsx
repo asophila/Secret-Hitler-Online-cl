@@ -1,74 +1,55 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import ButtonPrompt from "./ButtonPrompt";
 import { SERVER_TIMEOUT } from "../constants";
 
 import "../util/PolicyDisplay.css";
 import PolicyDisplay from "../util/PolicyDisplay";
 import { PolicyType, SendWSCommand, WSCommandType } from "../types";
+import { useText } from "../hooks/useText";
 
 type PresidentLegislativePromptProps = {
   policyOptions: PolicyType[];
   sendWSCommand: SendWSCommand;
 };
 
-type PresidentLegislativePromptState = {
-  selection: number | undefined;
-  waitingForServer: boolean;
-};
+function PresidentLegislativePrompt(props: PresidentLegislativePromptProps) {
+  const { t } = useText();
+  const [selection, setSelection] = useState<number | undefined>(undefined);
+  const [waitingForServer, setWaitingForServer] = useState(false);
 
-class PresidentLegislativePrompt extends Component<
-  PresidentLegislativePromptProps,
-  PresidentLegislativePromptState
-> {
-  constructor(props: PresidentLegislativePromptProps) {
-    super(props);
-    this.state = {
-      selection: undefined,
-      waitingForServer: false,
-    };
-    this.onButtonClick = this.onButtonClick.bind(this);
-  }
-
-  onButtonClick() {
-    if (this.state.selection === undefined) {
+  const onButtonClick = () => {
+    if (selection === undefined) {
       return;
     }
     // Lock the button so that it can't be pressed multiple times.
-    this.setState({ waitingForServer: true });
+    setWaitingForServer(true);
     setTimeout(() => {
-      this.setState({ waitingForServer: false });
+      setWaitingForServer(false);
     }, SERVER_TIMEOUT);
 
     // Contact the server using provided method.
-    this.props.sendWSCommand({
+    props.sendWSCommand({
       command: WSCommandType.REGISTER_PRESIDENT_CHOICE,
-      choice: this.state.selection,
+      choice: selection,
     });
-  }
+  };
 
-  // noinspection DuplicatedCode
-  render() {
-    return (
-      <ButtonPrompt
-        label={"LEGISLATIVE SESSION"}
-        headerText={
-          "Choose a policy to discard. The remaining policies are given to the chancellor."
-        }
-        buttonText={"DISCARD"}
-        buttonOnClick={this.onButtonClick}
-        buttonDisabled={
-          this.state.selection === undefined || this.state.waitingForServer
-        }
-      >
-        <PolicyDisplay
-          policies={this.props.policyOptions}
-          onClick={(index: number) => this.setState({ selection: index })}
-          selection={this.state.selection}
-          allowSelection={true}
-        />
-      </ButtonPrompt>
-    );
-  }
+  return (
+    <ButtonPrompt
+      label={t("legislative.president.header")}
+      headerText={t("legislative.president.instructions")}
+      buttonText={t("legislative.president.button")}
+      buttonOnClick={onButtonClick}
+      buttonDisabled={selection === undefined || waitingForServer}
+    >
+      <PolicyDisplay
+        policies={props.policyOptions}
+        onClick={(index: number) => setSelection(index)}
+        selection={selection}
+        allowSelection={true}
+      />
+    </ButtonPrompt>
+  );
 }
 
 export default PresidentLegislativePrompt;

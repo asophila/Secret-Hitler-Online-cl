@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import ButtonPrompt from "./ButtonPrompt";
 
@@ -10,81 +10,69 @@ import FolderBack from "../assets/policy-folder-back.png";
 
 import "./PolicyEnactedAlert.css";
 import { LIBERAL } from "../constants";
+import { useText } from "../hooks/useText";
 
-class PolicyEnactedAlert extends Component {
-  shiftAnimationTimeout;
-  flipAnimationTimeout;
+function PolicyEnactedAlert(props) {
+  const { t } = useText();
+  const [className, setClassName] = useState("");
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      className: "",
-    };
-  }
-
-  componentDidMount() {
+  useEffect(() => {
     // Set up animations
-    this.shiftAnimationTimeout = setTimeout(() => {
-      this.setState({ className: "show-policy-shift" });
+    const shiftTimeout = setTimeout(() => {
+      setClassName("show-policy-shift");
     }, 500);
-    this.flipAnimationTimeout = setTimeout(() => {
-      this.setState({ className: "show-policy-flip show-policy-shift" });
+    const flipTimeout = setTimeout(() => {
+      setClassName("show-policy-flip show-policy-shift");
     }, 1000);
-  }
 
-  componentWillUnmount() {
-    clearTimeout(this.shiftAnimationTimeout);
-    clearTimeout(this.flipAnimationTimeout);
-  }
+    return () => {
+      clearTimeout(shiftTimeout);
+      clearTimeout(flipTimeout);
+    };
+  }, []);
 
-  render() {
-    return (
-      <ButtonPrompt
-        renderLabel={() => {
-          return <h2 className={"left-align"}>POLICY ENACTED</h2>; // aligns text with center
-        }}
-        buttonText={"OKAY"}
-        buttonOnClick={this.props.hideAlert}
-      >
-        <div id={"policy-enacted-container"}>
-          <img
-            id={"policy-enacted-back"}
-            className={this.state.className}
-            src={FolderBack}
-            alt={""}
-          />
-          <img
-            id={"policy-enacted-policy"}
-            className={this.state.className}
-            src={
-              this.props.policyType === LIBERAL ? LiberalPolicy : FascistPolicy
-            }
-            alt={
-              "A " +
-                this.props.policyType.toLowerCase() +
-                " policy that was enacted! " +
-                this.props.policyType ===
-              LIBERAL
-                ? "It's printed in blue with a dove insignia on it."
-                : "It's printed in red with a skull insignia on it."
-            }
-          />
-          <img
-            id={"policy-enacted-cover-back"}
-            src={FolderCoverBack}
-            className={this.state.className}
-            alt={"A manila folder labeled 'New Policy.'"}
-          />
-          <img
-            id={"policy-enacted-cover-front"}
-            src={FolderCoverFront}
-            className={this.state.className}
-            alt={"A manila folder labeled 'New Policy.'"}
-          />
-        </div>
-      </ButtonPrompt>
-    );
-  }
+  const policyTypeLower = props.policyType.toLowerCase();
+  const isLiberal = props.policyType === LIBERAL;
+  const altText = isLiberal
+    ? t("policy.liberalAlt")
+    : t("policy.fascistAlt");
+
+  return (
+    <ButtonPrompt
+      renderLabel={() => {
+        return <h2 className={"left-align"}>{t("policy.enacted")}</h2>;
+      }}
+      buttonText={t("common.okay")}
+      buttonOnClick={props.hideAlert}
+    >
+      <div id={"policy-enacted-container"}>
+        <img
+          id={"policy-enacted-back"}
+          className={className}
+          src={FolderBack}
+          alt={""}
+        />
+        <img
+          id={"policy-enacted-policy"}
+          className={className}
+          src={isLiberal ? LiberalPolicy : FascistPolicy}
+          alt={altText}
+        />
+        <img
+          id={"policy-enacted-cover-back"}
+          src={FolderCoverBack}
+          className={className}
+          alt={"A manila folder labeled 'New Policy.'"}
+        />
+        <img
+          id={"policy-enacted-cover-front"}
+          src={FolderCoverFront}
+          className={className}
+          alt={"A manila folder labeled 'New Policy.'"}
+        />
+      </div>
+    </ButtonPrompt>
+  );
 }
 
 PolicyEnactedAlert.propTypes = {

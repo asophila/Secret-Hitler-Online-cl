@@ -7,6 +7,7 @@ import {
   DISABLE_TERM_LIMITED_PLAYERS,
 } from "../player/PlayerDisplay";
 import { GameState, SendWSCommand, WSCommandType } from "../types";
+import { useText } from "../hooks/useText";
 
 type AllowedWSCommandTypes =
   | WSCommandType.NOMINATE_CHANCELLOR
@@ -92,27 +93,25 @@ export const SelectNominationPrompt = (
   gameState: GameState,
   sendWSCommand: SendWSCommand
 ): ReactElement => {
+  const { t } = useText();
   let shouldFascistVictoryWarningBeShown = gameState.fascistPolicies >= 3;
 
   return (
     <SelectPlayerPrompt
       user={user}
       commandType={WSCommandType.NOMINATE_CHANCELLOR}
-      label={"NOMINATION"}
+      label={t("nomination.header")}
       gameState={gameState}
       sendWSCommand={sendWSCommand}
       renderHeader={() => {
         return (
           <div>
-            <p className="left-align">
-              Nominate a player to become the next Chancellor.
-            </p>
+            <p className="left-align">{t("nomination.instructions")}</p>
             <p
               className="left-align highlight"
               hidden={!shouldFascistVictoryWarningBeShown}
             >
-              Fascists will win if Hitler is nominated and voted in as
-              Chancellor!
+              {t("nomination.hitlerWarning")}
             </p>
           </div>
         );
@@ -137,6 +136,8 @@ export const SelectInvestigationPrompt = (
   gameState: GameState,
   sendWSCommand: SendWSCommand
 ): ReactElement => {
+  const { t } = useText();
+
   return (
     <SelectPlayerPrompt
       user={user}
@@ -145,21 +146,16 @@ export const SelectInvestigationPrompt = (
       commandType={WSCommandType.GET_INVESTIGATION}
       disabledFilter={DISABLE_INVESTIGATED_PLAYERS}
       includeUser={false}
-      label={"INVESTIGATE LOYALTY"}
+      label={t("investigation.header")}
       renderHeader={() => {
         return (
           <>
+            <p className={"left-align"}>{t("investigation.instructions")}</p>
             <p className={"left-align"}>
-              Choose a player and investigate their party alignment. You'll
-              learn if the player is a member of the Fascist or Liberal party,
-              but not their specific role (e.g., Hitler).
-            </p>
-            <p className={"left-align"}>
-              Players that have been investigated once cannot be investigated
-              again.
+              {t("investigation.cannotReinvestigate")}
             </p>
             <p className={"left-align highlight"}>
-              (Remember that you can lie about the player's party alignment!)
+              {t("investigation.reminder")}
             </p>
           </>
         );
@@ -173,6 +169,8 @@ export const SelectSpecialElectionPrompt = (
   gameState: GameState,
   sendWSCommand: SendWSCommand
 ): ReactElement => {
+  const { t } = useText();
+
   return (
     <SelectPlayerPrompt
       user={user}
@@ -181,10 +179,8 @@ export const SelectSpecialElectionPrompt = (
       commandType={WSCommandType.REGISTER_SPECIAL_ELECTION}
       disabledFilter={DISABLE_EXECUTED_PLAYERS}
       includeUser={false}
-      label={"SPECIAL ELECTION"}
-      headerText={
-        "Choose any player to become the next president. Once their term is finished, the order continues as normal."
-      }
+      label={t("specialElection.header")}
+      headerText={t("specialElection.instructions")}
     />
   );
 };
@@ -194,6 +190,8 @@ export const SelectExecutionPrompt = (
   gameState: GameState,
   sendWSCommand: SendWSCommand
 ): ReactElement => {
+  const { t } = useText();
+
   return (
     <SelectPlayerPrompt
       user={user}
@@ -202,16 +200,13 @@ export const SelectExecutionPrompt = (
       commandType={WSCommandType.REGISTER_EXECUTION}
       disabledFilter={DISABLE_EXECUTED_PLAYERS}
       includeUser={false}
-      label={"EXECUTION"}
+      label={t("execution.header")}
       renderHeader={() => {
         return (
           <>
-            <p className={"left-align"}>
-              Choose a player to execute. That player can no longer speak, vote,
-              or run for office.
-            </p>
+            <p className={"left-align"}>{t("execution.instructions")}</p>
             <p className={"left-align highlight"}>
-              The game ends and Liberals win if Hitler is executed.
+              {t("execution.liberalVictory")}
             </p>
           </>
         );

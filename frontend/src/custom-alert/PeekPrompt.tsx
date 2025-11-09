@@ -1,63 +1,53 @@
-import React, { Component } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { SERVER_TIMEOUT } from "../constants";
 import PolicyDisplay from "../util/PolicyDisplay";
 import ButtonPrompt from "./ButtonPrompt";
 import { PolicyType, SendWSCommand, WSCommandType } from "../types";
+import { useText } from "../hooks/useText";
 
 type PeekPromptProps = {
   policies: PolicyType[];
   sendWSCommand: SendWSCommand;
 };
 
-type PeekPromptState = {
-  waitingForServer: boolean;
-  selection: number | undefined;
-};
+function PeekPrompt(props: PeekPromptProps) {
+  const { t } = useText();
+  const [waitingForServer, setWaitingForServer] = useState(false);
+  const [selection, setSelection] = useState<number | undefined>(undefined);
+  const timeoutID = useRef<NodeJS.Timeout | undefined>(undefined);
 
-class PeekPrompt extends Component<PeekPromptProps, PeekPromptState> {
-  timeoutID: NodeJS.Timeout | undefined;
-
-  constructor(props: PeekPromptProps) {
-    super(props);
-    this.state = {
-      waitingForServer: false,
-      selection: undefined,
+  useEffect(() => {
+    return () => {
+      clearTimeout(timeoutID.current);
     };
-    this.onButtonClick = this.onButtonClick.bind(this);
-  }
+  }, []);
 
-  onButtonClick() {
+  const onButtonClick = () => {
     // Lock the button so that it can't be pressed multiple times.
-    this.setState({ waitingForServer: true });
-    this.timeoutID = setTimeout(() => {
-      this.setState({ waitingForServer: false });
+    setWaitingForServer(true);
+    timeoutID.current = setTimeout(() => {
+      setWaitingForServer(false);
     }, SERVER_TIMEOUT);
 
     // Contact the server using provided method.
-    this.props.sendWSCommand({ command: WSCommandType.REGISTER_PEEK });
-  }
+    props.sendWSCommand({ command: WSCommandType.REGISTER_PEEK });
+  };
 
-  componentWillUnmount() {
-    clearTimeout(this.timeoutID);
-  }
-
-  render() {
-    return (
-      <ButtonPrompt
-        label={"PEEK"}
-        headerText={"These are the next three policies in the draw deck."}
-        buttonText={"OKAY"}
-        buttonOnClick={this.onButtonClick}
-        buttonDisabled={this.state.waitingForServer}
-      >
-        <PolicyDisplay
-          policies={this.props.policies}
-          onClick={(index: number) => this.setState({ selection: index })}
-          allowSelection={false}
-        />
-      </ButtonPrompt>
-    );
-  }
+  return (
+    <ButtonPrompt
+      label={t("peek.header")}
+      headerText={t("peek.instructions")}
+      buttonText={t("common.okay")}
+      buttonOnClick={onButtonClick}
+      buttonDisabled={waitingForServer}
+    >
+      <PolicyDisplay
+        policies={props.policies}
+        onClick={(index: number) => setSelection(index)}
+        allowSelection={false}
+      />
+    </ButtonPrompt>
+  );
 }
 
 export default PeekPrompt;

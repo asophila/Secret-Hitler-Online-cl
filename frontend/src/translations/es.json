@@ -1,0 +1,218 @@
+{
+  "roles": {
+    "HITLER": "Hitler",
+    "FASCIST": "Fascista",
+    "LIBERAL": "Liberal"
+  },
+
+  "parties": {
+    "FASCIST": "Fascista",
+    "LIBERAL": "Liberal"
+  },
+
+  "positions": {
+    "president": "Presidente",
+    "chancellor": "Canciller"
+  },
+
+  "roleInstructions": {
+    "liberal": {
+      "title": "ERES: LIBERAL",
+      "win": "Ganas si el tablero se llena con políticas liberales, o si Hitler es ejecutado.",
+      "lose": "Pierdes si el tablero se llena con políticas fascistas, o si Hitler es elegido canciller después de que se aprueben 3 políticas fascistas.",
+      "strategy": "Mantén los ojos abiertos y busca acciones sospechosas. Descubre a Hitler, ¡y recuerda que cualquiera puede estar mintiendo!"
+    },
+    "fascist": {
+      "title": "ERES: FASCISTA",
+      "win": "Ganas si Hitler es elegido canciller después de que haya 3 políticas fascistas en el tablero, o si el tablero se llena con políticas fascistas.",
+      "lose": "Pierdes si el tablero se llena con políticas liberales o si Hitler es ejecutado.",
+      "strategy": "Mantén las sospechas lejos de Hitler y busca formas de sembrar confusión en el juego."
+    },
+    "hitler": {
+      "title": "ERES: HITLER",
+      "win": "Ganas si eres elegido canciller después de que haya 3 políticas fascistas en el tablero, o si el tablero se llena con políticas fascistas.",
+      "lose": "Pierdes si el tablero se llena con políticas liberales o si eres ejecutado.",
+      "strategy": "Intenta ganar confianza y confía en los otros fascistas para abrirte oportunidades."
+    }
+  },
+
+  "roleAltText": {
+    "liberal": [
+      "Tu rol secreto es LIBERAL. La carta muestra a un hombre con gafas y pipa mirando de reojo.",
+      "Tu rol secreto es LIBERAL. La carta muestra a una mujer elegante con cabello rizado y perlas.",
+      "Tu rol secreto es LIBERAL. La carta muestra a un hombre de mentón redondo con un sombrero de peregrino mirando con curiosidad a la cámara.",
+      "Tu rol secreto es LIBERAL. La carta muestra a un hombre bien vestido con fedora y bigote bien recortado.",
+      "Tu rol secreto es LIBERAL. La carta muestra a una anciana con gafas cómicamente grandes sosteniendo un chihuahua.",
+      "Tu rol secreto es LIBERAL. La carta muestra a una mujer con un gran sombrero de sol y pelo corto sonriendo con suficiencia."
+    ],
+    "fascist": [
+      "Tu rol secreto es FASCISTA. La carta muestra a una serpiente saliendo de un traje cubierto de medallas militares.",
+      "Tu rol secreto es FASCISTA. La carta muestra a una iguana con sombrero militar alemán y traje con colmillos al descubierto.",
+      "Tu rol secreto es FASCISTA. La carta muestra a una iguana con sombrero militar alemán y traje con colmillos al descubierto."
+    ],
+    "hitler": [
+      "Tu rol secreto es HITLER. La carta muestra a un cocodrilo con traje y sombrero militar alemán de la Segunda Guerra Mundial mirando fijamente a la cámara."
+    ]
+  },
+
+  "voting": {
+    "header": "VOTACIÓN",
+    "nominated": "{president} ha nominado a {chancellor} como canciller.",
+    "instructions": "Vota si quieres que este gobierno proceda. La votación pasa si más del 50% vota sí.",
+    "hitlerWarning": "¡Los Fascistas ganarán si Hitler es votado como canciller!",
+    "trackerWarning": "Si esta votación falla, la siguiente política en el mazo será aprobada inmediatamente.",
+    "yes": "¡Sí!",
+    "no": "No"
+  },
+
+  "nomination": {
+    "header": "NOMINACIÓN",
+    "instructions": "Nomina un jugador para convertirse en el próximo Canciller.",
+    "hitlerWarning": "¡Los Fascistas ganarán si Hitler es nominado y votado como Canciller!"
+  },
+
+  "legislative": {
+    "president": {
+      "header": "SESIÓN LEGISLATIVA",
+      "instructions": "Elige una política para descartar. Las políticas restantes se entregan al canciller.",
+      "button": "DESCARTAR"
+    },
+    "chancellor": {
+      "header": "SESIÓN LEGISLATIVA",
+      "instructions": "Elige una política para aprobar. La política restante será descartada.",
+      "vetoUnlocked": "Poder de veto desbloqueado: Si eliges vetar y el presidente acepta el veto, la agenda será descartada.",
+      "vetoButton": "VETAR",
+      "enactButton": "APROBAR",
+      "vetoError": "El poder de veto se desbloquea cuando hay 5 políticas fascistas."
+    }
+  },
+
+  "veto": {
+    "header": "VETO LEGISLATIVO",
+    "requested": "El canciller ha solicitado vetar la agenda.",
+    "trackerWarning": "Si se acepta el veto, la política superior del mazo será aprobada automáticamente.",
+    "normalCase": "Si se acepta el veto, las políticas restantes serán descartadas y el marcador de elecciones avanzará 1.",
+    "otherwise": "De lo contrario, el canciller deberá aprobar una política como de costumbre.",
+    "question": "¿Aceptar el veto?",
+    "accept": "ACEPTAR",
+    "reject": "RECHAZAR"
+  },
+
+  "investigation": {
+    "header": "INVESTIGAR LEALTAD",
+    "instructions": "Elige un jugador e investiga su afiliación partidaria. Aprenderás si el jugador es miembro del partido Fascista o Liberal, pero no su rol específico (ej., Hitler).",
+    "cannotReinvestigate": "Los jugadores que ya han sido investigados no pueden ser investigados de nuevo.",
+    "reminder": "(¡Recuerda que puedes mentir sobre la afiliación partidaria del jugador!)",
+    "resultsHeader": "RESULTADOS DE INVESTIGACIÓN",
+    "resultText": "{target} es miembro del partido {party}.",
+    "notification": "Has sido investigado por {president}. El presidente ahora conoce tu afiliación partidaria.",
+    "otherNotification": "{target} ha sido investigado por {president}. El presidente ahora conoce su afiliación partidaria."
+  },
+
+  "execution": {
+    "header": "EJECUCIÓN",
+    "instructions": "Elige un jugador para ejecutar. Ese jugador ya no podrá hablar, votar, ni postularse para un cargo.",
+    "liberalVictory": "El juego termina y los Liberales ganan si Hitler es ejecutado.",
+    "executed": "HAS SIDO EJECUTADO",
+    "executedInstructions": "Los jugadores ejecutados no pueden hablar, votar, ni postularse para cargos. No debes revelar tu identidad al grupo.",
+    "notification": "{player} ha sido ejecutado. Ya no pueden hablar, votar, ni postularse para cargos."
+  },
+
+  "specialElection": {
+    "header": "ELECCIÓN ESPECIAL",
+    "instructions": "Elige cualquier jugador para convertirse en el próximo presidente. Una vez que termine su mandato, el orden continúa como normal.",
+    "notification": "{target} ha sido elegido como el próximo presidente por {president}.",
+    "status": "Elección Especial: El Presidente está eligiendo al próximo presidente."
+  },
+
+  "peek": {
+    "header": "ESPIAR",
+    "instructions": "Estas son las próximas tres políticas en el mazo."
+  },
+
+  "policy": {
+    "enacted": "POLÍTICA APROBADA",
+    "liberalAlt": "¡Una política liberal que fue aprobada! Está impresa en azul con una insignia de paloma.",
+    "fascistAlt": "¡Una política fascista que fue aprobada! Está impresa en rojo con una insignia de calavera."
+  },
+
+  "victory": {
+    "fascistPolicy": "¡Victoria Fascista!",
+    "fascistPolicyDesc": "¡Los Fascistas ganaron aprobando 6 políticas fascistas!",
+    "fascistElection": "¡Victoria Fascista!",
+    "fascistElectionDesc": "¡Los Fascistas ganaron al elegir a Hitler como Canciller!",
+    "liberalPolicy": "¡Victoria Liberal!",
+    "liberalPolicyDesc": "¡Los Liberales ganaron aprobando 5 políticas liberales!",
+    "liberalExecution": "¡Victoria Liberal!",
+    "liberalExecutionDesc": "¡Los Liberales ganaron al ejecutar a Hitler!"
+  },
+
+  "lobby": {
+    "connecting": "Conectando...",
+    "notFound": "No se pudo encontrar la sala.",
+    "nameTaken": "Ya hay un usuario con el nombre '{name}' en la sala.",
+    "gameInProgress": "La sala actualmente está en una partida.",
+    "lobbyFull": "La sala está llena.",
+    "startGame": "INICIAR PARTIDA",
+    "selectIcon": "Selecciona tu Icono",
+    "waiting": "Esperando a que el anfitrión inicie la partida...",
+    "minPlayers": "Se necesitan al menos {min} jugadores para iniciar."
+  },
+
+  "common": {
+    "okay": "ACEPTAR",
+    "confirm": "CONFIRMAR",
+    "yes": "SÍ",
+    "no": "NO"
+  },
+
+  "status": {
+    "waitingForPresident": "Esperando a que {president} termine su turno.",
+    "nominateChancellor": "{president} está nominando un Canciller.",
+    "voting": "La votación está en progreso.",
+    "presidentChoosing": "{president} está eligiendo qué política descartar.",
+    "chancellorChoosing": "{chancellor} está eligiendo qué política aprobar.",
+    "vetoRequested": "{chancellor} ha solicitado un veto. Esperando respuesta de {president}.",
+    "investigating": "{president} está investigando la lealtad de un jugador.",
+    "executing": "{president} está eligiendo un jugador para ejecutar.",
+    "specialElection": "{president} está eligiendo al próximo presidente.",
+    "peeking": "{president} está espiando las próximas políticas."
+  },
+
+  "events": {
+    "gameStarted": "¡La partida ha comenzado!",
+    "newPresident": "{president} es el nuevo Presidente.",
+    "chancellorNominated": "{president} ha nominado a {chancellor} como Canciller.",
+    "votePassed": "¡La votación pasó! {president} y {chancellor} están ahora en el cargo.",
+    "voteFailed": "La votación falló. El marcador de elecciones avanza.",
+    "policyEnacted": "Una política {type} ha sido aprobada.",
+    "vetoAccepted": "El veto fue aceptado. Las políticas fueron descartadas.",
+    "vetoRejected": "El veto fue rechazado.",
+    "playerExecuted": "{player} ha sido ejecutado.",
+    "hitlerExecuted": "¡Hitler ha sido ejecutado! ¡Los Liberales ganan!",
+    "hitlerElected": "¡Hitler ha sido elegido Canciller! ¡Los Fascistas ganan!",
+    "electionTrackerMaxed": "El marcador de elecciones llegó al máximo. La siguiente política será aprobada automáticamente.",
+    "chaosPolicy": "¡Una política de caos ha sido aprobada!"
+  },
+
+  "meta": {
+    "title": "Secret Hitler Online: Un juego de mesa en línea gratuito para hasta 10 jugadores.",
+    "shortTitle": "Secret Hitler Online",
+    "description": "Un juego en línea de identidad oculta gratuito para hasta 10 jugadores, basado en el juego de mesa original Secret Hitler.",
+    "appName": "Secret Hitler"
+  },
+
+  "login": {
+    "title": "¿Qué es Secret Hitler Online?",
+    "description1": "Secret Hitler Online es una adaptación del juego de mesa original Secret Hitler, reimaginado para la web.",
+    "description2": "Admite hasta 10 jugadores, con arte y animaciones suaves con todo el secreto e intriga del original. Está diseñado para ser fácil de aprender y jugar en cualquier noche de juegos en cuarentena.",
+    "description3": "¡Juega gratis en tu navegador, sin anuncios nunca!",
+    "openSource": "El proyecto es de código abierto y está licenciado bajo CC BY-NC-SA 4.0. Puedes leer más sobre el proyecto",
+    "onGitHub": "en GitHub",
+    "adaptedFrom": "Adaptado del juego de mesa original",
+    "secretHitler": "Secret Hitler",
+    "credits": "por Goat, Wolf & Cabbage (© 2016-2020). Desarrollado por ShrimpCryptid (© 2020-2023).",
+    "bugReport": "¿Encontraste un error o quieres dejar un comentario? Reporta errores en la",
+    "issuesPage": "página de Issues"
+  }
+}

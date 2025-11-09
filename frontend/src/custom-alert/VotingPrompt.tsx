@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import ButtonPrompt from "./ButtonPrompt";
 import {
   PARAM_CHANCELLOR,
@@ -13,6 +13,7 @@ import YesVote from "../assets/vote-yes.png";
 import NoVote from "../assets/vote-no.png";
 import Player from "../player/Player";
 import { GameState, Role, SendWSCommand, WSCommandType } from "../types";
+import { useText } from "../hooks/useText";
 
 type VotingPromptProps = {
   gameState: GameState;
@@ -20,22 +21,17 @@ type VotingPromptProps = {
   user: string;
 };
 
-type VotingPromptState = {
-  selection?: string;
-  waitingForServer: boolean;
-};
+function VotingPrompt(props: VotingPromptProps) {
+  const { t } = useText();
+  const [selection, setSelection] = useState<string | undefined>(undefined);
+  const [waitingForServer, setWaitingForServer] = useState(false);
+  const timeoutID = useRef<NodeJS.Timeout | undefined>(undefined);
 
-class VotingPrompt extends Component<VotingPromptProps, VotingPromptState> {
-  timeoutID: NodeJS.Timeout | undefined;
-
-  constructor(props: VotingPromptProps) {
-    super(props);
-    this.state = {
-      selection: undefined,
-      waitingForServer: false,
+  useEffect(() => {
+    return () => {
+      clearTimeout(timeoutID.current);
     };
-    this.onButtonClick = this.onButtonClick.bind(this);
-  }
+  }, []);
 
   /**
    * Returns whether the chancellor's role should be shown on the card.
@@ -43,9 +39,9 @@ class VotingPrompt extends Component<VotingPromptProps, VotingPromptState> {
    *          - The player is fascist and the chancellor is fascist/hitler
    *          - The player is hitler, the chancellor is fascist, and there are 5-6 players.
    */
-  shouldChancellorRoleBeShown() {
-    let game = this.props.gameState;
-    let userRole = game[PARAM_PLAYERS][this.props.user][PLAYER_IDENTITY];
+  const shouldChancellorRoleBeShown = () => {
+    let game = props.gameState;
+    let userRole = game[PARAM_PLAYERS][props.user][PLAYER_IDENTITY];
     let chancellor = game[PARAM_CHANCELLOR];
     let chancellorRole = game[PARAM_PLAYERS][chancellor][PLAYER_IDENTITY];
     switch (userRole) {
@@ -64,112 +60,94 @@ class VotingPrompt extends Component<VotingPromptProps, VotingPromptState> {
       default:
     }
     return false;
-  }
+  };
 
   /**
    * Called when the confirm button is clicked.
    * @effects Attempts to send the server a command with the player's vote, and locks access to the button
    *          for {@code SERVER_TIMEOUT} ms.
    */
-  onButtonClick() {
+  const onButtonClick = () => {
     // Lock the button so that it can't be pressed multiple times.
-    this.timeoutID = setTimeout(() => {
-      this.setState({ waitingForServer: false });
+    timeoutID.current = setTimeout(() => {
+      setWaitingForServer(false);
     }, SERVER_TIMEOUT);
-    this.setState({ waitingForServer: true });
+    setWaitingForServer(true);
 
     // Contact the server using provided method.
-    this.props.sendWSCommand({
+    props.sendWSCommand({
       command: WSCommandType.REGISTER_VOTE,
-      vote: this.state.selection === "yes",
+      vote: selection === "yes",
     });
-  }
+  };
 
-  componentWillUnmount() {
-    clearTimeout(this.timeoutID);
-  }
+  let chancellorName = props.gameState[PARAM_CHANCELLOR];
+  let shouldShowChancellorRole = shouldChancellorRoleBeShown();
+  let chancellorRole =
+    props.gameState[PARAM_PLAYERS][chancellorName][PLAYER_IDENTITY];
+  let presidentName = props.gameState[PARAM_PRESIDENT];
 
-  render() {
-    let chancellorName = this.props.gameState[PARAM_CHANCELLOR];
-    let shouldShowChancellorRole = this.shouldChancellorRoleBeShown();
-    let chancellorRole =
-      this.props.gameState[PARAM_PLAYERS][chancellorName][PLAYER_IDENTITY];
-    let presidentName = this.props.gameState[PARAM_PRESIDENT];
-    return (
-      <ButtonPrompt
-        label={"VOTING"}
-        renderHeader={() => {
-          return (
-            <>
-              <Player
-                id={"voting-player"}
-                name={chancellorName}
-                showRole={shouldShowChancellorRole}
-                role={chancellorRole}
-                style={{ marginRight: "10px" }}
-                icon={this.props.gameState.icon[chancellorName]}
-              />
+  return (
+    <ButtonPrompt
+      label={t("voting.header")}
+      renderHeader={() => {
+        return (
+          <>
+            <Player
+              id={"voting-player"}
+              name={chancellorName}
+              showRole={shouldShowChancellorRole}
+              role={chancellorRole}
+              style={{ marginRight: "10px" }}
+              icon={props.gameState.icon[chancellorName]}
+            />
 
-              <p className="left-align">
-                {presidentName +
-                  " has nominated " +
-                  chancellorName +
-                  " as chancellor."}
+            <p className="left-align">
+              {t("voting.nominated", {
+                president: presidentName,
+                chancellor: chancellorName,
+              })}
+            </p>
+            <p className="left-align">{t("voting.instructions")}</p>
+
+            {/* These are two optional warnings that appear when player decisions are extra critical,
+                                    such as if fascists can win the game or if the voting tracker will hit the end. */}
+            {props.gameState.fascistPolicies >= 3 && (
+              <p className="highlight left-align">
+                {t("voting.hitlerWarning")}
               </p>
-              <p className="left-align">
-                {
-                  "Vote on whether you want this government to proceed; The vote passes if over 50% of the votes are yes."
-                }
+            )}
+            {props.gameState.electionTracker === 2 && (
+              <p className="highlight left-align">
+                {t("voting.trackerWarning")}
               </p>
-
-              {/* These are two optional warnings that appear when player decisions are extra critical,
-                                      such as if fascists can win the game or if the voting tracker will hit the end. */}
-              {this.props.gameState.fascistPolicies >= 3 && (
-                <p className="highlight left-align">
-                  {
-                    "Fascists will win if Hitler is successfully voted in as chancellor!"
-                  }
-                </p>
-              )}
-              {this.props.gameState.electionTracker === 2 && (
-                <p className="highlight left-align">
-                  {
-                    "If this vote fails, the next policy in the draw deck will be immediately enacted."
-                  }
-                </p>
-              )}
-            </>
-          );
-        }}
-        buttonDisabled={
-          this.state.selection === undefined || this.state.waitingForServer
-        }
-        buttonOnClick={this.onButtonClick}
-      >
-        <div id={"voting-card-container"}>
-          <img
-            id={"voting-card"}
-            className={
-              "selectable " +
-              (this.state.selection === "yes" ? "selected " : "")
-            } /*Determines if this should be selected.*/
-            src={YesVote}
-            alt={"Ja! (Yes)"}
-            onClick={() => this.setState({ selection: "yes" })}
-          />
-          <img
-            id={"voting-card"}
-            className={
-              "selectable " + (this.state.selection === "no" ? "selected " : "")
-            }
-            src={NoVote}
-            alt={"Nein (No)"}
-            onClick={() => this.setState({ selection: "no" })}
-          />
-        </div>
-      </ButtonPrompt>
-    );
-  }
+            )}
+          </>
+        );
+      }}
+      buttonDisabled={selection === undefined || waitingForServer}
+      buttonOnClick={onButtonClick}
+    >
+      <div id={"voting-card-container"}>
+        <img
+          id={"voting-card"}
+          className={
+            "selectable " + (selection === "yes" ? "selected " : "")
+          } /*Determines if this should be selected.*/
+          src={YesVote}
+          alt={t("voting.yes")}
+          onClick={() => setSelection("yes")}
+        />
+        <img
+          id={"voting-card"}
+          className={"selectable " + (selection === "no" ? "selected " : "")}
+          src={NoVote}
+          alt={t("voting.no")}
+          onClick={() => setSelection("no")}
+        />
+      </div>
+    </ButtonPrompt>
+  );
 }
 
 export default VotingPrompt;
