@@ -136,6 +136,8 @@ public class SecretHitlerServer {
 
         serverApp.get("/check-login", SecretHitlerServer::checkLogin); // Checks if a login is valid.
         serverApp.get("/new-lobby", SecretHitlerServer::createNewLobby); // Creates and returns the code for a new lobby
+        serverApp.get("/list-lobbies", SecretHitlerServer::listPublicLobbies); // Returns list of public lobbies
+        serverApp.post("/set-lobby-visibility", SecretHitlerServer::setLobbyVisibility); // Sets lobby public/private
         serverApp.get("/ping", SecretHitlerServer::ping);
 
         serverApp.ws("/game", wsHandler -> {
@@ -458,8 +460,89 @@ public class SecretHitlerServer {
     }
 
     /**
+     * Returns a list of all public lobbies that are not in game and not full.
+     * Sorted by player count (most players first).
+     *
+     * @param ctx the HTTP get request context.
+     */
+    public static void listPublicLobbies(Context ctx) {
+        removeInactiveLobbies();
+
+        org.json.JSONArray lobbies = new org.json.JSONArray();
+
+        // Collect public lobbies with their metadata
+        List<Map.Entry<String, Lobby>> publicLobbies = new ArrayList<>();
+        for (Map.Entry<String, Lobby> entry : codeToLobby.entrySet()) {
+            Lobby lobby = entry.getValue();
+            if (lobby.isPublic() && !lobby.isInGame() && !lobby.isFull()) {
+                publicLobbies.add(entry);
+            }
+        }
+
+        // Sort by player count (most players first)
+        publicLobbies.sort((a, b) -> Integer.compare(b.getValue().getUserCount(), a.getValue().getUserCount()));
+
+        // Build JSON response
+        for (Map.Entry<String, Lobby> entry : publicLobbies) {
+            Lobby lobby = entry.getValue();
+            JSONObject lobbyInfo = new JSONObject();
+            lobbyInfo.put("code", entry.getKey());
+            lobbyInfo.put("name", lobby.getLobbyName());
+            lobbyInfo.put("playerCount", lobby.getUserCount());
+            lobbyInfo.put("maxPlayers", game.SecretHitlerGame.MAX_PLAYERS);
+            lobbyInfo.put("createdAt", lobby.getCreatedAt().getTime());
+            lobbies.put(lobbyInfo);
+        }
+
+        ctx.status(200);
+        ctx.result(lobbies.toString());
+        ctx.contentType("application/json");
+        logger.debug("Listed " + lobbies.length() + " public lobbies");
+    }
+
+    /**
+     * Sets the visibility (public/private) and name of a lobby.
+     * Only the first player (VIP) in the lobby can change these settings.
+     *
+     * @param ctx the HTTP post request context with JSON body containing:
+     *            - lobby: the lobby code
+     *            - isPublic: boolean for visibility
+     *            - name: optional lobby name
+     */
+    public static void setLobbyVisibility(Context ctx) {
+        try {
+            JSONObject body = new JSONObject(ctx.body());
+            String lobbyCode = body.getString(PARAM_LOBBY);
+            boolean isPublic = body.getBoolean("isPublic");
+            String lobbyName = body.optString("name", "");
+
+            if (!codeToLobby.containsKey(lobbyCode)) {
+                ctx.status(404);
+                ctx.result("Lobby not found");
+                return;
+            }
+
+            Lobby lobby = codeToLobby.get(lobbyCode);
+
+            // Update lobby settings
+            lobby.setPublic(isPublic);
+            lobby.setLobbyName(lobbyName);
+            hasLobbyChanged = true;
+
+            ctx.status(200);
+            ctx.result("OK");
+            logger.info("Lobby " + lobbyCode + " visibility set to " + (isPublic ? "public" : "private") +
+                       (lobbyName.isEmpty() ? "" : " with name: " + lobbyName));
+        } catch (Exception e) {
+            ctx.status(400);
+            ctx.result("Invalid request: " + e.getMessage());
+            logger.error("Error setting lobby visibility: " + e.getMessage());
+        }
+    }
+
+    /**
      * Generates a random code.
-     * 
+     *
      * @return a String code, with length specified by {@code this.CODE_LENGTH} and
      *         characters randomly
      *         chosen from {@code CODE_CHARACTERS}.

@@ -1,0 +1,129 @@
+.lobby-browser {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.lobby-browser h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #e05b2b;
+}
+
+.lobby-browser-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.lobby-browser-actions button {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  border: 2px solid #333;
+  background-color: #fff;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.lobby-browser-actions button:hover:not(:disabled) {
+  background-color: #f0f0f0;
+}
+
+.lobby-browser-actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.lobby-browser-message,
+.lobby-browser-error {
+  text-align: center;
+  padding: 20px;
+  font-size: 16px;
+}
+
+.lobby-browser-error {
+  color: #c00;
+}
+
+.lobby-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.lobby-item {
+  border: 2px solid #333;
+  border-radius: 8px;
+  padding: 15px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.lobby-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.lobby-item-name {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.lobby-item-players {
+  font-size: 14px;
+  color: #666;
+  font-weight: bold;
+}
+
+.lobby-item-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lobby-item-code {
+  font-size: 14px;
+  color: #666;
+  font-family: monospace;
+}
+
+.lobby-item-join {
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  border: 2px solid #e05b2b;
+  background-color: #e05b2b;
+  color: white;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.lobby-item-join:hover {
+  background-color: #c04a1a;
+  border-color: #c04a1a;
+}
+
+@media (max-width: 600px) {
+  .lobby-item-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+
+  .lobby-item-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .lobby-item-join {
+    width: 100%;
+  }
+}

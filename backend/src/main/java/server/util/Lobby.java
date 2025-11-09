@@ -47,6 +47,11 @@ public class Lobby implements Serializable {
     public static float CPU_ACTION_DELAY_IN_SEC = 4;
     private long timeout;
 
+    // Lobby visibility settings
+    private boolean isPublic = false;       // Private by default
+    private String lobbyName = "";          // Optional display name
+    private Date createdAt = new Date();    // Creation timestamp for sorting
+
     private static Logger logger = LoggerFactory.getLogger(Lobby.class);
 
     private static int MAX_TIMER_SCHEDULING_ATTEMPTS = 2;
@@ -537,6 +542,56 @@ public class Lobby implements Serializable {
         } else {
             return game;
         }
+    }
+
+    // </editor-fold>
+
+    ////// Lobby Visibility Management
+    // <editor-fold desc="Lobby Visibility Management">
+
+    /**
+     * Returns whether the lobby is public (listed in lobby browser).
+     *
+     * @return true if the lobby is public.
+     */
+    synchronized public boolean isPublic() {
+        return isPublic;
+    }
+
+    /**
+     * Sets whether the lobby is public.
+     *
+     * @param isPublic whether the lobby should be public.
+     */
+    synchronized public void setPublic(boolean isPublic) {
+        this.isPublic = isPublic;
+    }
+
+    /**
+     * Returns the lobby's display name.
+     *
+     * @return the lobby name (may be empty string).
+     */
+    synchronized public String getLobbyName() {
+        return lobbyName;
+    }
+
+    /**
+     * Sets the lobby's display name.
+     *
+     * @param lobbyName the new lobby name.
+     */
+    synchronized public void setLobbyName(String lobbyName) {
+        this.lobbyName = lobbyName != null ? lobbyName : "";
+    }
+
+    /**
+     * Returns when the lobby was created.
+     *
+     * @return the creation date.
+     */
+    synchronized public Date getCreatedAt() {
+        return createdAt;
     }
 
     // </editor-fold>

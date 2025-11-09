@@ -1,0 +1,116 @@
+.lobby-settings-panel {
+  border: 2px solid #333;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+  background-color: #f9f9f9;
+}
+
+.lobby-settings-title {
+  margin: 0 0 15px 0;
+  font-size: 18px;
+  color: #333;
+  text-align: center;
+}
+
+.lobby-settings-content {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.lobby-settings-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lobby-settings-label {
+  font-weight: bold;
+  font-size: 14px;
+  color: #333;
+}
+
+.lobby-settings-radio-group {
+  display: flex;
+  gap: 20px;
+}
+
+.lobby-settings-radio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.lobby-settings-radio input[type="radio"] {
+  cursor: pointer;
+}
+
+.lobby-settings-input {
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  font-family: inherit;
+}
+
+.lobby-settings-input:focus {
+  outline: none;
+  border-color: #e05b2b;
+}
+
+.lobby-settings-save {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  border: 2px solid #e05b2b;
+  background-color: #e05b2b;
+  color: white;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+  align-self: center;
+  min-width: 120px;
+}
+
+.lobby-settings-save:hover:not(:disabled) {
+  background-color: #c04a1a;
+  border-color: #c04a1a;
+}
+
+.lobby-settings-save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.lobby-settings-message {
+  text-align: center;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.lobby-settings-message.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.lobby-settings-message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+@media (max-width: 600px) {
+  .lobby-settings-panel {
+    padding: 15px;
+  }
+
+  .lobby-settings-radio-group {
+    flex-direction: column;
+    gap: 10px;
+  }
+}

@@ -214,5 +214,33 @@
     "credits": "por Goat, Wolf & Cabbage (© 2016-2020). Desarrollado por ShrimpCryptid (© 2020-2023).",
     "bugReport": "¿Encontraste un error o quieres dejar un comentario? Reporta errores en la",
     "issuesPage": "página de Issues"
+  },
+
+  "lobbyBrowser": {
+    "title": "Salas Públicas",
+    "playerCount": "{current}/{max}",
+    "players": "jugadores",
+    "joinButton": "UNIRSE",
+    "refresh": "ACTUALIZAR",
+    "createPrivate": "CREAR SALA PRIVADA",
+    "noLobbies": "No hay salas públicas disponibles",
+    "lobbyCode": "Código:",
+    "loading": "Cargando salas...",
+    "browseButton": "BUSCAR SALAS PÚBLICAS",
+    "orDivider": "- o -",
+    "enterCode": "Ingresar código de sala"
+  },
+
+  "lobbySettings": {
+    "title": "Configuración de Sala",
+    "hostOnly": "(Solo Anfitrión)",
+    "visibility": "Visibilidad",
+    "public": "Pública",
+    "private": "Privada",
+    "lobbyName": "Nombre de la Sala",
+    "lobbyNamePlaceholder": "Nombre de la sala (opcional)",
+    "save": "GUARDAR",
+    "publicBadge": "PÚBLICO",
+    "privateBadge": "PRIVADO"
   }
 }
